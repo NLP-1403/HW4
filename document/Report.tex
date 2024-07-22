@@ -124,9 +124,9 @@ Note: Some parts of the explanations of code from here to the end of the documen
 
 \begin{lstlisting}[language=Python]
 try:
-os.makedirs('data/tweets')
+	os.makedirs('data/tweets')
 except FileExistsError:
-print('Directory already exists')
+	print('Directory already exists')
 os.chdir('selenium-twitter-scraper')
 
 base_command = f'python scraper --user=@{config["TWITTER_USERNAME"]} --password={config["TWITTER_PASSWORD"]} --top '
@@ -146,9 +146,10 @@ tweets_files = sorted(tweets_files)
 tweets = []
 
 for tweets_file in tweets_files:
-current_file = pd.read_csv(f'{directory}/{tweets_file}')
-current_file = current_file['Content'].tolist()
-tweets += current_file
+    current_file = pd.read_csv(f'{directory}/{tweets_file}')
+    current_file = current_file['Content'].tolist()
+    tweets += current_file
+
 
 len(tweets), tweets
 \end{lstlisting}
@@ -163,37 +164,38 @@ The main part of scrapping Twitter is using the Python scraper command with diff
 	directory = 'data/chatgpt'
 	
 	biased_files = [
-	'Bias1.txt',
-	'Bias2.txt',
-	'Bias3.txt',
-	'Bias4.txt',
-	'Bias5.txt',
+		'Bias1.txt',
+		'Bias2.txt',
+		'Bias3.txt',
+		'Bias4.txt',
+		'Bias5.txt',
 	]
 	
 	unbiased_files = [
-	'NoBias1.txt',
-	'NoBias2.txt',
-	'NoBias3.txt',
-	'NoBias4.txt',
-	# 'NoBias5.txt',
-	'NoBias6.txt',
+		'NoBias1.txt',
+		'NoBias2.txt',
+		'NoBias3.txt',
+		'NoBias4.txt',
+		# 'NoBias5.txt',
+		'NoBias6.txt',
 	]
 	
 	biased_chatgpt = []
 	unbiased_chatgpt = []
 	
 	for file in biased_files:
-	with open(f'{directory}/{file}', 'r', encoding='utf-8') as file:
-	current_data = file.read().split('\n\n')
-	biased_chatgpt += current_data
+		with open(f'{directory}/{file}', 'r', encoding='utf-8') as file:
+			current_data = file.read().split('\n\n')
+			biased_chatgpt += current_data
 	
 	for file in unbiased_files:
-	with open(f'{directory}/{file}', 'r', encoding='utf-8') as file:
-	current_data = file.read().split('\n\n')
-	unbiased_chatgpt += current_data
+		with open(f'{directory}/{file}', 'r', encoding='utf-8') as file:
+			current_data = file.read().split('\n\n')
+			unbiased_chatgpt += current_data
 	
 	len(biased_chatgpt), len(unbiased_chatgpt)
-\end{lstlisting}
+	\end{lstlisting}
+	
 
 
 \begin{solution}
@@ -210,37 +212,37 @@ The script reads biased and unbiased data files:
 	data = []
 	
 	with open('data/tweets/tweets_all.txt', 'r', encoding='utf-8') as file:
-	labeled_tweets = file.read().split('\n\n')
+		labeled_tweets = file.read().split('\n\n')
 	
 	len(labeled_tweets)
 	
 	for i in range(0, len(labeled_tweets), 2):
-	tweet, label = labeled_tweets[i], labeled_tweets[i + 1]
-	data.append({
-		"id": len(data),
-		"dialogue": tweet,
-		"summary": label,
-	})
+		tweet, label = labeled_tweets[i], labeled_tweets[i + 1]
+		data.append({
+			"id": len(data),
+			"dialogue": tweet,
+			"summary": label,
+		})
 	
 	for biased_chatgpt_data in biased_chatgpt:
-	prompt, label = biased_chatgpt_data.split('\n')
-	prompt = prompt.split(': ')[1]
-	label = label.split(': ')[1]
-	data.append({
-		"id": len(data),
-		"dialogue": prompt,
-		"summary": label,
-	})
+		prompt, label = biased_chatgpt_data.split('\n')
+		prompt = prompt.split(': ')[1]
+		label = label.split(': ')[1]
+		data.append({
+			"id": len(data),
+			"dialogue": prompt,
+			"summary": label,
+		})
 	
 	for unbiased_chatgpt_data in unbiased_chatgpt:
-	prompt = unbiased_chatgpt_data
-	prompt = prompt.split(': ')[1]
-	data.append({
-		"id": len(data),
-		"dialogue": prompt,
-		"summary": prompt,
-	})
-\end{lstlisting}
+		prompt = unbiased_chatgpt_data
+		prompt = prompt.split(': ')[1]
+		data.append({
+			"id": len(data),
+			"dialogue": prompt,
+			"summary": prompt,
+		})
+	\end{lstlisting}
 
 
 \begin{solution}
@@ -256,15 +258,14 @@ Finally, the script combines labeled tweet data and ChatGPT data into a single l
 
 \begin{lstlisting}[language=Python]
 	with open('stopwords/chars.txt', 'r', encoding='utf-8') as file:
-	chars_stop_words = ''.join(file.read().splitlines())
+		chars_stop_words = ''.join(file.read().splitlines())
 	
 	chars_stop_words = chars_stop_words.replace('[', '\[')
 	chars_stop_words = chars_stop_words.replace(']', '\]')
 	chars_stop_words += '\t\r'
 	chars_pattern = re.compile(f'[{chars_stop_words}]')
 	chars_pattern
-\end{lstlisting}
-
+	\end{lstlisting}
 
 \begin{solution}
 The script reads stopwords from a file and prepares a regex pattern to remove them:
@@ -280,13 +281,13 @@ The script reads stopwords from a file and prepares a regex pattern to remove th
 \begin{lstlisting}[language=Python]
 	# https://stackoverflow.com/questions/33404752/removing-emojis-from-a-string-in-python
 	emojis_pattern = re.compile("["
-	u"\U0001F600-\U0001F64F"  # emoticons
-	u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-	u"\U0001F680-\U0001F6FF"  # transport & map symbols
-	u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-	"]+")
+								u"\U0001F600-\U0001F64F"  # emoticons
+								u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+								u"\U0001F680-\U0001F6FF"  # transport & map symbols
+								u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+								"]+")
 	emojis_pattern
-\end{lstlisting}
+	\end{lstlisting}
 
 
 \begin{solution}
@@ -304,19 +305,19 @@ The script initializes a \texttt{Normalizer} from the \texttt{hazm} library for 
 
 \begin{lstlisting}[language=Python]
 	def remove_duplicates(data):
-	data_df: pd.DataFrame = pd.DataFrame(data)
-	data_df = data_df.drop_duplicates(subset=['dialogue'])
+		data_df: pd.DataFrame = pd.DataFrame(data)
+		data_df = data_df.drop_duplicates(subset=['dialogue'])
 	
-	data = []
-	for index, row in data_df.iterrows():
-	data.append({
-		"id": row['id'],
-		"dialogue": row['dialogue'],
-		"summary": row['summary'],
-	})
+		data = []
+		for index, row in data_df.iterrows():
+			data.append({
+				"id": row['id'],
+				"dialogue": row['dialogue'],
+				"summary": row['summary'],
+			})
 	
-	return data
-\end{lstlisting}
+		return data
+	\end{lstlisting}
 
 
 \begin{solution}
@@ -326,14 +327,14 @@ The \texttt{remove\_duplicates} function removes duplicate entries from the data
 
 \begin{lstlisting}[language=Python]
 	def preprocess_text(text):
-	global chars_pattern, emojis_pattern, normalizer
+		global chars_pattern, emojis_pattern, normalizer
 	
-	text = emojis_pattern.sub(r' ', text)
-	text = chars_pattern.sub(r' ', text)
-	text = normalizer.normalize(text)
+		text = emojis_pattern.sub(r' ', text)
+		text = chars_pattern.sub(r' ', text)
+		text = normalizer.normalize(text)
 	
-	return text
-\end{lstlisting}
+		return text
+	\end{lstlisting}
 
 
 \begin{solution}
@@ -347,7 +348,8 @@ The \texttt{preprocess\_text} function applies regex patterns to remove emojis a
 	len_after = len(data)
 	
 	len_before, len_after
-\end{lstlisting}
+	\end{lstlisting}
+
 
 \begin{solution}
 The script removes duplicates from the data and prints the length of the data before and after the removal.
@@ -355,15 +357,15 @@ The script removes duplicates from the data and prints the length of the data be
 
 
 \begin{lstlisting}[language=Python]
-	preprocessed_data = []
-	
-	progress_bar = tqdm(data)
-	for datum in progress_bar:
-	preprocessed_data.append({
-		"id": datum["id"],
-		"dialogue": preprocess_text(datum["dialogue"]),
-		"summary": preprocess_text(datum["summary"]),
-	})
+preprocessed_data = []
+
+progress_bar = tqdm(data)
+for datum in progress_bar:
+    preprocessed_data.append({
+        "id": datum["id"],
+        "dialogue": preprocess_text(datum["dialogue"]),
+        "summary": preprocess_text(datum["summary"]),
+    })
 \end{lstlisting}
 
 \begin{solution}
@@ -382,15 +384,15 @@ Finally, the script preprocesses the text data using the \texttt{preprocess\_tex
 	random.seed(42)
 	
 	for _ in range(NUMBER_TO_SHUFFLE):
-	random.shuffle(preprocessed_data)
-	print(preprocessed_data[0])
+		random.shuffle(preprocessed_data)
+		print(preprocessed_data[0])
 	
 	train_data, test_data = train_test_split(preprocessed_data, test_size=0.1, random_state=42)
 	len(train_data), len(test_data)
 	
 	train_data = sorted(train_data, key=lambda x: x['id'])
 	test_data = sorted(test_data, key=lambda x: x['id'])
-\end{lstlisting}
+	\end{lstlisting}
 
 \begin{solution}
 This segment of the script performs the following operations:
@@ -423,19 +425,20 @@ The script then sets up the shuffling and splitting of preprocessed data:
 	os.makedirs(directory, exist_ok=True)
 	
 	with open(f'{directory}/train.json', 'w', encoding='utf-8') as file:
-	json.dump(train_data, file, ensure_ascii=False, indent=2)
+		json.dump(train_data, file, ensure_ascii=False, indent=2)
 	
 	with open(f'{directory}/test.json', 'w', encoding='utf-8') as file:
-	json.dump(test_data, file, ensure_ascii=False, indent=2)
+		json.dump(test_data, file, ensure_ascii=False, indent=2)
 	
 	os.chdir(directory)
 	
 	with py7zr.SevenZipFile('gender_neutralize.7z', 'w') as archive:
-	archive.write('train.json')
-	archive.write('test.json')
+		archive.write('train.json')
+		archive.write('test.json')
 	
 	os.chdir('../..')
-\end{lstlisting}
+	\end{lstlisting}
+
 
 \begin{solution}
 This part of the script saves and archives the processed data:
@@ -504,17 +507,17 @@ The following code installs necessary Python packages and logs into the Hugging 
 	
 	from transformers import BitsAndBytesConfig
 	config = BitsAndBytesConfig(
-	load_in_8bit=True,
+		load_in_8bit=True,
 	)
 	
 	model = LlamaForCausalLM.from_pretrained(
-	train_config.model_name,
-	device_map="auto",
-	quantization_config=config,
-	use_cache=False,
-	attn_implementation="sdpa" if train_config.use_fast_kernels else None,
-	torch_dtype=torch.float16,
-	)
+				train_config.model_name,
+				device_map="auto",
+				quantization_config=config,
+				use_cache=False,
+				attn_implementation="sdpa" if train_config.use_fast_kernels else None,
+				torch_dtype=torch.float16,
+			)
 	
 	tokenizer = AutoTokenizer.from_pretrained(train_config.model_name)
 	tokenizer.pad_token = tokenizer.eos_token
@@ -552,7 +555,7 @@ The following code installs necessary Python packages and logs into the Hugging 
 	\begin{lstlisting}
 		from transformers import BitsAndBytesConfig
 		config = BitsAndBytesConfig(
-		load_in_8bit=True,
+			load_in_8bit=True,
 		)
 	\end{lstlisting}
 \end{solution}
@@ -561,13 +564,13 @@ The following code installs necessary Python packages and logs into the Hugging 
 	Load the LLaMA model for causal language modeling using the specified configuration. The model is loaded with the training configuration parameters, including device mapping, quantization settings, cache usage, attention implementation, and data type.
 	\begin{lstlisting}
 		model = LlamaForCausalLM.from_pretrained(
-		train_config.model_name,
-		device_map="auto",
-		quantization_config=config,
-		use_cache=False,
-		attn_implementation="sdpa" if train_config.use_fast_kernels else None,
-		torch_dtype=torch.float16,
-		)
+            train_config.model_name,
+            device_map="auto",
+            quantization_config=config,
+            use_cache=False,
+            attn_implementation="sdpa" if train_config.use_fast_kernels else None,
+            torch_dtype=torch.float16,
+        )
 	\end{lstlisting}
 \end{solution}
 
@@ -604,20 +607,20 @@ For the Bert-Score calculation, we used Microsoft \verb|deberta-v2-xxlarge-mnli|
 
 \begin{lstlisting}
 	import datasets
-	
+
 	# Load the test dataset
 	test_dataset = datasets.load_dataset("AmirMohammadFakhimi/gender_neutralize", split="test")
 	
 	# Prepare the prompts for evaluation
 	prompt_template = (
-	***"
-	)
+			f"***\n"
+		)
 	
 	def prepare_prompt(sample):
-	return {
-		"prompt": prompt_template.format(dialog=sample["dialogue"]),
-		"summary": sample["summary"]
-	}
+		return {
+			"prompt": prompt_template.format(dialog=sample["dialogue"]),
+			"summary": sample["summary"]
+		}
 	
 	test_dataset = test_dataset.map(prepare_prompt, remove_columns=list(test_dataset.features))
 \end{lstlisting}
@@ -665,32 +668,32 @@ For the Bert-Score calculation, we used Microsoft \verb|deberta-v2-xxlarge-mnli|
 
 \begin{lstlisting}
 	import torch
-	
+
 	def generate_predictions(model, tokenizer, dataset):
-	predictions = []
-	references = []
+		predictions = []
+		references = []
 	
-	model.eval()
-	with torch.no_grad():
-	for sample in dataset:
-	model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
-	output = model.generate(**model_input, max_new_tokens=100)
-	prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+		model.eval()
+		with torch.no_grad():
+			for sample in dataset:
+				model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
+				output = model.generate(**model_input, max_new_tokens=100)
+				prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+			
+				# Extract the part after "***"
+				prediction = prediction.split('***\n')[1].strip()
+				prediction = re.sub('***', ' '  , prediction)
+				# Remove non-Alphabetical characters and digits execpt dot
+				prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
+				# Define a regular expression pattern that matches one or more spaces
+				pattern = re.compile(r" +")
+				# Apply the pattern to the text and replace the matches with a single space
+				prediction = pattern.sub(" ", prediction)
+				
+				predictions.append(prediction)
+				references.append(sample["summary"])
 	
-	# Extract the part after "*** :"
-	prediction = prediction.split('\n________\n***:\n')[1].strip()
-	prediction = re.sub('***:', ' '  , prediction)
-	# Remove non-Alphabetical characters and digits execpt dot
-	prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
-	# Define a regular expression pattern that matches one or more spaces
-	pattern = re.compile(r" +")
-	# Apply the pattern to the text and replace the matches with a single space
-	prediction = pattern.sub(" ", prediction)
-	
-	predictions.append(prediction)
-	references.append(sample["summary"])
-	
-	return predictions, references
+		return predictions, references
 	
 	# Generate predictions for base model
 	base_predictions, references = generate_predictions(model, tokenizer, test_dataset)
@@ -709,27 +712,27 @@ For the Bert-Score calculation, we used Microsoft \verb|deberta-v2-xxlarge-mnli|
 		def generate_predictions(model, tokenizer, dataset):
 		predictions = []
 		references = []
-		
+	
 		model.eval()
 		with torch.no_grad():
-		for sample in dataset:
-		model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
-		output = model.generate(**model_input, max_new_tokens=100)
-		prediction = tokenizer.decode(output[0], skip_special_tokens=True)
-		
-		# Extract the part after "متن بدون بایاس جنسیتی:"
-		prediction = prediction.split('\n________\n***:\n')[1].strip()
-		prediction = re.sub('***:', ' '  , prediction)
-		# Remove non-Alphabetical characters and digits execpt dot
-		prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
-		# Define a regular expression pattern that matches one or more spaces
-		pattern = re.compile(r" +")
-		# Apply the pattern to the text and replace the matches with a single space
-		prediction = pattern.sub(" ", prediction)
-		
-		predictions.append(prediction)
-		references.append(sample["summary"])
-		
+			for sample in dataset:
+				model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
+				output = model.generate(**model_input, max_new_tokens=100)
+				prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+			
+				# Extract the part after "***"
+				prediction = prediction.split('***\n')[1].strip()
+				prediction = re.sub('***', ' '  , prediction)
+				# Remove non-Alphabetical characters and digits execpt dot
+				prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
+				# Define a regular expression pattern that matches one or more spaces
+				pattern = re.compile(r" +")
+				# Apply the pattern to the text and replace the matches with a single space
+				prediction = pattern.sub(" ", prediction)
+				
+				predictions.append(prediction)
+				references.append(sample["summary"])
+	
 		return predictions, references
 	\end{lstlisting}
 \end{solution}
@@ -749,17 +752,17 @@ For the Bert-Score calculation, we used Microsoft \verb|deberta-v2-xxlarge-mnli|
 	bleu_metric = load('bleu')
 	
 	def compute_metrics(predictions, references):
-	# fix the references with the BLEU score HuggingFace format
-	references = [[ref] for ref in references]
+		# fix the references with the BLEU score HuggingFace format
+		references = [[ref] for ref in references]
 	
-	# Compute BLEU score
-	bleu_score = bleu_metric.compute(predictions=predictions, references=references, tokenizer=word_tokenize)#["bleu"]
+		# Compute BLEU score
+		bleu_score = bleu_metric.compute(predictions=predictions, references=references, tokenizer=word_tokenize)#["bleu"]
 	
-	# Compute BERTScore
-	bertscore = bertscore_metric.compute(predictions=predictions, references=references, lang="fa", model_type='microsoft/deberta-v2-xxlarge-mnli')
-	bertscore_f1 = sum(bertscore["f1"]) / len(bertscore["f1"])
+		# Compute BERTScore
+		bertscore = bertscore_metric.compute(predictions=predictions, references=references, lang="fa", model_type='microsoft/deberta-v2-xxlarge-mnli')
+		bertscore_f1 = sum(bertscore["f1"]) / len(bertscore["f1"])
 	
-	return bleu_score, bertscore_f1
+		return bleu_score, bertscore_f1
 	
 	# Compute metrics for both models
 	base_bleu, base_bertscore = compute_metrics(base_predictions, references)
@@ -787,18 +790,18 @@ For the Bert-Score calculation, we used Microsoft \verb|deberta-v2-xxlarge-mnli|
 	Define a function to compute evaluation metrics for the predictions. The function computes the BLEU score and the BERTScore F1 metric.
 	\begin{lstlisting}
 		def compute_metrics(predictions, references):
-		# fix the references with the BLEU score HuggingFace format
-		references = [[ref] for ref in references]
+			# fix the references with the BLEU score HuggingFace format
+			references = [[ref] for ref in references]
 		
-		# Compute BLEU score
-		bleu_score = bleu_metric.compute(predictions=predictions, references=references, tokenizer=word_tokenize)
+			# Compute BLEU score
+			bleu_score = bleu_metric.compute(predictions=predictions, references=references, tokenizer=word_tokenize)
 		
-		# Compute BERTScore
-		bertscore = bertscore_metric.compute(predictions=predictions, references=references, lang="fa", model_type='microsoft/deberta-v2-xxlarge-mnli')
-		bertscore_f1 = sum(bertscore["f1"]) / len(bertscore["f1"])
+			# Compute BERTScore
+			bertscore = bertscore_metric.compute(predictions=predictions, references=references, lang="fa", model_type='microsoft/deberta-v2-xxlarge-mnli')
+			bertscore_f1 = sum(bertscore["f1"]) / len(bertscore["f1"])
 		
-		return bleu_score, bertscore_f1
-	\end{lstlisting}
+			return bleu_score, bertscore_f1
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -826,10 +829,10 @@ It is noteworthy that we used "packing" for batching strategy instead of "paddin
 		
 		@dataclass
 		class samsum_dataset:
-		dataset: str = "samsum_dataset"
-		train_split: str = "train"
-		test_split: str = "validation"
-	\end{lstlisting}
+			dataset: str = "samsum_dataset"
+			train_split: str = "train"
+			test_split: str = "validation"
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -841,8 +844,8 @@ It is noteworthy that we used "packing" for batching strategy instead of "paddin
 		import datasets
 		
 		def get_preprocessed_samsum(dataset_config, tokenizer, split):
-		dataset = datasets.load_dataset("AmirMohammadFakhimi/gender_neutralize", split=split)
-	\end{lstlisting}
+			dataset = datasets.load_dataset("AmirMohammadFakhimi/gender_neutralize", split=split)
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -858,54 +861,54 @@ It is noteworthy that we used "packing" for batching strategy instead of "paddin
 	The `apply\_prompt\_template` function is applied to each sample in the dataset to create the prompt and summary pairs.
 	\begin{lstlisting}
 		def apply_prompt_template(sample):
-		return {
-			"prompt": prompt.format(dialog=sample["dialogue"]),
-			"summary": sample["summary"],
-		}
+			return {
+				"prompt": prompt.format(dialog=sample["dialogue"]),
+				"summary": sample["summary"],
+			}
 		
-		dataset = dataset.map(apply\_prompt\_template, remove\_columns=list(dataset.features))
-	\end{lstlisting}
+		dataset = dataset.map(apply_prompt_template, remove_columns=list(dataset.features))
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
 	The `tokenize\_add\_label` function tokenizes the prompt and summary, concatenates them, and prepares the input IDs, attention mask, and labels for training.
 	\begin{lstlisting}
 		def tokenize_add_label(sample):
-		prompt = tokenizer.encode(tokenizer.bos_token + sample["prompt"], add_special_tokens=False)
-		summary = tokenizer.encode(sample["summary"] + tokenizer.eos_token, add_special_tokens=False)
+			prompt = tokenizer.encode(tokenizer.bos_token + sample["prompt"], add_special_tokens=False)
+			summary = tokenizer.encode(sample["summary"] + tokenizer.eos_token, add_special_tokens=False)
 		
-		sample = {
-			"input_ids": prompt + summary,
-			"attention_mask": [1] * (len(prompt) + len(summary)),
-			"labels": [-100] * len(prompt) + summary,
-		}
+			sample = {
+				"input_ids": prompt + summary,
+				"attention_mask": [1] * (len(prompt) + len(summary)),
+				"labels": [-100] * len(prompt) + summary,
+			}
 		
-		return sample
+			return sample
 		
-		dataset = dataset.map(tokenize\_add\_label, remove\_columns=list(dataset.features))
-	\end{lstlisting}
+		dataset = dataset.map(tokenize_add_label, remove_columns=list(dataset.features))
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
 	The `get\_preprocessed\_dataset` function is a wrapper around `get\_preprocessed\_samsum` that selects the appropriate split (train or test) based on the provided configuration and returns the preprocessed dataset.
 	\begin{lstlisting}
 		def get_preprocessed_dataset(
-		tokenizer, dataset_config, split: str = "train"
+			tokenizer, dataset_config, split: str = "train"
 		) -> torch.utils.data.Dataset:
 		
-		def get_split():
-		return (
-		dataset_config.train_split
-		if split == "train"
-		else dataset_config.test_split
-		)
+			def get_split():
+				return (
+					dataset_config.train_split
+					if split == "train"
+					else dataset_config.test_split
+				)
 		
-		return get_preprocessed_samsum(
-		dataset_config,
-		tokenizer,
-		get_split(),
-		)
-	\end{lstlisting}
+			return get_preprocessed_samsum(
+				dataset_config,
+				tokenizer,
+				get_split(),
+			)
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -942,12 +945,12 @@ It is noteworthy that we used "packing" for batching strategy instead of "paddin
 	Finally, a PyTorch DataLoader is created for the training dataset with the specified number of workers and other configurations.
 	\begin{lstlisting}
 		train_dataloader = torch.utils.data.DataLoader(
-		train_dataset,
-		num_workers=train_config.num_workers_dataloader,
-		pin_memory=True,
-		**train_dl_kwargs,
+			train_dataset,
+			num_workers=train_config.num_workers_dataloader,
+			pin_memory=True,
+			**train_dl_kwargs,
 		)
-	\end{lstlisting}
+		\end{lstlisting}
 	
 \end{solution}
 
@@ -1020,28 +1023,28 @@ This is the fine tuning step.
 	model.train()
 	
 	optimizer = optim.AdamW(
-	model.parameters(),
-	lr=train_config.lr,
-	weight_decay=train_config.weight_decay,
-	)
+				model.parameters(),
+				lr=train_config.lr,
+				weight_decay=train_config.weight_decay,
+			)
 	scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
 	
 	# Start the training process
 	results = train(
-	model,
-	train_dataloader,
-	None,
-	tokenizer,
-	optimizer,
-	scheduler,
-	train_config.gradient_accumulation_steps,
-	train_config,
-	None,
-	None,
-	None,
-	wandb_run=None,
+		model,
+		train_dataloader,
+		None,
+		tokenizer,
+		optimizer,
+		scheduler,
+		train_config.gradient_accumulation_steps,
+		train_config,
+		None,
+		None,
+		None,
+		wandb_run=None,
 	)
-\end{lstlisting}
+	\end{lstlisting}
 
 \begin{solution}
 	The `torch.optim` module is imported to handle the optimization process. The `train` function and `StepLR` scheduler are imported to manage training and learning rate scheduling, respectively.
@@ -1063,11 +1066,11 @@ This is the fine tuning step.
 	An AdamW optimizer is created with parameters from the model, learning rate from the training configuration, and weight decay to regularize the model.
 	\begin{lstlisting}
 		optimizer = optim.AdamW(
-		model.parameters(),
-		lr=train_config.lr,
-		weight_decay=train_config.weight_decay,
-		)
-	\end{lstlisting}
+					model.parameters(),
+					lr=train_config.lr,
+					weight_decay=train_config.weight_decay,
+				)
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -1114,7 +1117,6 @@ This is the fine tuning step.
 	\end{lstlisting}
 \end{solution}
 
-
 \begin{lstlisting}
 	from transformers import LlamaForCausalLM, AutoTokenizer, BitsAndBytesConfig
 	from peft import PeftModel, PeftConfig
@@ -1127,15 +1129,15 @@ This is the fine tuning step.
 	
 	# Use mixed precision and quantization to save memory
 	config = BitsAndBytesConfig(
-	load_in_8bit=True,
-	llm_int8_enable_fp32_cpu_offload=True  # Enable CPU offload to save GPU memory
+		load_in_8bit=True,
+		llm_int8_enable_fp32_cpu_offload=True  # Enable CPU offload to save GPU memory
 	)
 	
 	base_model = LlamaForCausalLM.from_pretrained(
-	base_model_name,
-	device_map="auto",
-	quantization_config=config,
-	torch_dtype=torch.float16
+		base_model_name,
+		device_map="auto",
+		quantization_config=config,
+		torch_dtype=torch.float16
 	)
 	
 	# Load the adapter configuration
@@ -1144,7 +1146,7 @@ This is the fine tuning step.
 	
 	# Load the LoRA adapter
 	model = PeftModel.from_pretrained(base_model, peft_model_id, config=adapter_config)
-\end{lstlisting}
+	\end{lstlisting}
 
 \begin{solution}
 	The necessary libraries for loading and configuring the model for inference are imported. These include `LlamaForCausalLM`, `AutoTokenizer`, and `BitsAndBytesConfig` from `transformers`, as well as `PeftModel` and `PeftConfig` from `peft`.
@@ -1178,12 +1180,12 @@ This is the fine tuning step.
 	The base model is loaded using the `LlamaForCausalLM` class with the defined quantization configuration and mixed precision (FP16).
 	\begin{lstlisting}
 		base_model = LlamaForCausalLM.from_pretrained(
-		base_model_name,
-		device_map="auto",
-		quantization_config=config,
-		torch_dtype=torch.float16
+			base_model_name,
+			device_map="auto",
+			quantization_config=config,
+			torch_dtype=torch.float16
 		)
-	\end{lstlisting}
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -1208,34 +1210,34 @@ This is the fine tuning step.
 	import re
 	
 	def generate_predictions(model, tokenizer, dataset):
-	predictions = []
-	references = []
+		predictions = []
+		references = []
 	
-	model.eval()
-	with torch.no_grad():
-	for sample in dataset:
-	model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
-	output = model.generate(**model_input, max_new_tokens=100)
-	prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+		model.eval()
+		with torch.no_grad():
+			for sample in dataset:
+				model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
+				output = model.generate(**model_input, max_new_tokens=100)
+				prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+				
+				# Extract the part after "***"
+				prediction = prediction.split('***\n')[1].strip()
+				prediction = re.sub('***', ' '  , prediction)
+				# Remove non-Alphabetical characters and digits except dot
+				prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
+				# Define a regular expression pattern that matches one or more spaces
+				pattern = re.compile(r" +")
+				# Apply the pattern to the text and replace the matches with a single space
+				prediction = pattern.sub(" ", prediction)
+				
+				predictions.append(prediction)
+				references.append(sample["summary"])
+				
+				# Clear CUDA cache to free up memory
+				torch.cuda.empty_cache()
 	
-	# Extract the part after "***"
-	prediction = prediction.split('***')[1].strip()
-	prediction = re.sub('***:', ' '  , prediction)
-	# Remove non-Alphabetical characters and digits except dot
-	prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
-	# Define a regular expression pattern that matches one or more spaces
-	pattern = re.compile(r" +")
-	# Apply the pattern to the text and replace the matches with a single space
-	prediction = pattern.sub(" ", prediction)
-	
-	predictions.append(prediction)
-	references.append(sample["summary"])
-	
-	# Clear CUDA cache to free up memory
-	torch.cuda.empty_cache()
-	
-	return predictions, references
-\end{lstlisting}
+		return predictions, references
+	\end{lstlisting}
 
 \begin{solution}
 	The `generate\_predictions` function generates predictions from the model for each sample in the dataset and cleans up the text.
@@ -1253,47 +1255,47 @@ This is the fine tuning step.
 	\end{itemize}
 	\begin{lstlisting}
 		def generate_predictions(model, tokenizer, dataset):
-		predictions = []
-		references = []
+			predictions = []
+			references = []
 		
-		model.eval()
-		with torch.no_grad():
-		for sample in dataset:
-		model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
-		output = model.generate(**model_input, max_new_tokens=100)
-		prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+			model.eval()
+			with torch.no_grad():
+				for sample in dataset:
+					model_input = tokenizer(sample["prompt"], return_tensors="pt").to("cuda")
+					output = model.generate(**model_input, max_new_tokens=100)
+					prediction = tokenizer.decode(output[0], skip_special_tokens=True)
+					
+					# Extract the part after "***"
+					prediction = prediction.split('***')[1].strip()
+					prediction = re.sub('***', ' '  , prediction)
+					# Remove non-Alphabetical characters and digits except dot
+					prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
+					# Define a regular expression pattern that matches one or more spaces
+					pattern = re.compile(r" +")
+					# Apply the pattern to the text and replace the matches with a single space
+					prediction = pattern.sub(" ", prediction)
+					
+					predictions.append(prediction)
+					references.append(sample["summary"])
+					
+					# Clear CUDA cache to free up memory
+					torch.cuda.empty_cache()
 		
-		# Extract the part after "***"
-		prediction = prediction.split('***')[1].strip()
-		prediction = re.sub('***', ' '  , prediction)
-		# Remove non-Alphabetical characters and digits except dot
-		prediction = re.sub(r'[^.آ-یA-Za-z\s]', ' ', prediction)
-		# Define a regular expression pattern that matches one or more spaces
-		pattern = re.compile(r" +")
-		# Apply the pattern to the text and replace the matches with a single space
-		prediction = pattern.sub(" ", prediction)
-		
-		predictions.append(prediction)
-		references.append(sample["summary"])
-		
-		# Clear CUDA cache to free up memory
-		torch.cuda.empty_cache()
-		
-		return predictions, references
-	\end{lstlisting}
+			return predictions, references
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
 	Predictions and references are saved to text files for later evaluation. Each line of the prediction file corresponds to a generated output, while each line of the references file corresponds to the reference summary.
 	\begin{lstlisting}
 		with open("tuned_predictions.txt", "w") as f:
-		for pred in tuned_predictions:
-		f.write(str(pred) +"\n")
-		
+			for pred in tuned_predictions:
+				f.write(str(pred) +"\n")
+				
 		with open("references.txt", "w") as f:
-		for ref in references:
-		f.write(str(ref) +"\n")
-	\end{lstlisting}
+			for ref in references:
+				f.write(str(ref) +"\n")
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -1301,14 +1303,14 @@ This is the fine tuning step.
 	\begin{lstlisting}
 		references = []
 		with open("references.txt", "r") as f:
-		for line in f:
-		references.append(int(line.strip()))
-		
+		  for line in f:
+			references.append(int(line.strip()))
+			
 		tuned_predictions = []
 		with open("tuned_predictions.txt", "r") as f:
-		for line in f:
-		tuned_predictions.append(int(line.strip()))
-	\end{lstlisting}
+		  for line in f:
+			tuned_predictions.append(int(line.strip()))
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -1326,18 +1328,18 @@ This is the fine tuning step.
 		bleu_metric = load('bleu')
 		
 		def compute_metrics(predictions, references):
-		# fix the references with the BLEU score HuggingFace format
-		references = [[ref] for ref in references]
+			# fix the references with the BLEU score HuggingFace format
+			references = [[ref] for ref in references]
 		
-		# Compute BLEU score
-		bleu_score = bleu_metric.compute(predictions=predictions, references=references, tokenizer=word_tokenize)
+			# Compute BLEU score
+			bleu_score = bleu_metric.compute(predictions=predictions, references=references, tokenizer=word_tokenize)
 		
-		# Compute BERTScore
-		bertscore = bertscore_metric.compute(predictions=predictions, references=references, lang="fa", model_type='microsoft/deberta-v2-xxlarge-mnli')
-		bertscore_f1 = sum(bertscore["f1"]) / len(bertscore["f1"])
+			# Compute BERTScore
+			bertscore = bertscore_metric.compute(predictions=predictions, references=references, lang="fa", model_type='microsoft/deberta-v2-xxlarge-mnli')
+			bertscore_f1 = sum(bertscore["f1"]) / len(bertscore["f1"])
 		
-		return bleu_score, bertscore_f1
-	\end{lstlisting}
+			return bleu_score, bertscore_f1
+		\end{lstlisting}
 \end{solution}
 
 \begin{solution}
@@ -1377,17 +1379,17 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{figure}[ht!]
 	\centering
-	\begin{subfigure}[t]{1.0\textwidth}
+	\begin{subfigure}[t]{0.5\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{img/3/s1b.png}
+		\includegraphics[width=0.5\textwidth]{img/3/s1b.png}
 		\caption{Base Model}
 	\end{subfigure}%
 
 	\bigskip
 	
-	\begin{subfigure}[t]{\textwidth}
+	\begin{subfigure}[t]{0.5\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{img/3/s1f.png}
+		\includegraphics[width=0.5\textwidth]{img/3/s1f.png}
 		\caption{Fine-Tuned Model}
 	\end{subfigure}
 	\caption{Sample Prediction 1}
@@ -1396,17 +1398,17 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{figure}[ht!]
 	\centering
-\begin{subfigure}[t]{1.0\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s2b.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s2b.png}
 	\caption{Base Model}
 \end{subfigure}%
 
 \bigskip
 
-\begin{subfigure}[t]{\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s2f.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s2f.png}
 	\caption{Fine-Tuned Model}
 \end{subfigure}
 	\caption{Sample Prediction 2}
@@ -1419,17 +1421,17 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{figure}[ht!]
 	\centering
-\begin{subfigure}[t]{1.0\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s3b.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s3b.png}
 	\caption{Base Model}
 \end{subfigure}%
 
 \bigskip
 
-\begin{subfigure}[t]{\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s3f.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s3f.png}
 	\caption{Fine-Tuned Model}
 \end{subfigure}
 	\caption{Sample Prediction 3}
@@ -1442,17 +1444,17 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{figure}[ht!]
 	\centering
-\begin{subfigure}[t]{1.0\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s4b.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s4b.png}
 	\caption{Base Model}
 \end{subfigure}%
 
 \bigskip
 
-\begin{subfigure}[t]{\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s4f.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s4f.png}
 	\caption{Fine-Tuned Model}
 \end{subfigure}
 	\caption{Sample Prediction 4}
@@ -1465,17 +1467,17 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{figure}[ht!]
 	\centering
-\begin{subfigure}[t]{1.0\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s5b.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s5b.png}
 	\caption{Base Model}
 \end{subfigure}%
 
 \bigskip
 
-\begin{subfigure}[t]{\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s5f.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s5f.png}
 	\caption{Fine-Tuned Model}
 \end{subfigure}
 	\caption{Sample Prediction 5}
@@ -1487,9 +1489,9 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{figure}[ht!]
 	\centering
-\begin{subfigure}[t]{1.0\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s6b.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s6b.png}
 	\caption{Base Model}
 \end{subfigure}%
 
@@ -1497,7 +1499,7 @@ As shown in the figures below, we saw a huge improvement in BLUE and BERT scores
 
 \begin{subfigure}[t]{\textwidth}
 	\centering
-	\includegraphics[width=\textwidth]{img/3/s6f.png}
+	\includegraphics[width=0.5\textwidth]{img/3/s6f.png}
 	\caption{Fine-Tuned Model}
 \end{subfigure}
 	\caption{Sample Prediction 6}
